@@ -1,15 +1,158 @@
 <!DOCTYPE html>
-<html>
-  <head>
-    <meta charset="utf-8" />
-    <meta name="viewport" content="width=device-width" />
-    <!---->
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Number Guessing Game</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            text-align: center;
+            background-color: #f4f4f9;
+            padding: 20px;
+        }
+        .button-container {
+            margin: 20px 0;
+            min-height: 120px; /* Prevents layout shift when buttons disappear */
+        }
+        .num-btn {
+            background: none;
+            border: none;
+            cursor: pointer;
+            padding: 0;
+            margin: 0 10px;
+            transition: transform 0.2s;
+        }
+        .num-btn:hover {
+            transform: scale(1.1);
+        }
+        .num-btn img {
+            width: 100px;
+            height: 100px;
+            border-radius: 10px;
+        }
+        .hidden {
+            visibility: hidden;
+        }
+        #result-display {
+            margin: 20px 0;
+            min-height: 60px;
+        }
+        #result-display img {
+            height: 50px;
+        }
+        #reset-btn {
+            padding: 10px 20px;
+            font-size: 16px;
+            background-color: #007BFF;
+            color: white;
+            border: none;
+            border-radius: 5px;
+            cursor: pointer;
+        }
+        #reset-btn:hover {
+            background-color: #0056b3;
+        }
+        .stats {
+            font-size: 18px;
+            font-weight: bold;
+            margin-top: 15px;
+        }
+    </style>
+</head>
+<body>
 
-    <title>CMP621A Practice Exam - Guess My Number Game</title>
-    <link href="style.css" rel="stylesheet" type="text/css" />
-  </head>
-  <body>
-    <!-- Put your code here -->
-    <script src="script.js"></script>
-  </body>
-</html>
+    <h2>Guess the Secret Number!</h2>
+    <p>Click on one of the number images below. If you guess correctly, you win! If not, keep trying.</p>
+
+    <div class="button-container">
+        <button class="num-btn" data-num="1"><img src="one.png" alt="1"></button>
+        <button class="num-btn" data-num="2"><img src="two.png" alt="2"></button>
+        <button class="num-btn" data-num="3"><img src="three.png" alt="3"></button>
+        <button class="num-btn" data-num="4"><img src="four.png" alt="4"></button>
+        <button class="num-btn" data-num="5"><img src="five.png" alt="5"></button>
+    </div>
+
+    <div id="result-display"></div>
+
+    <p class="stats">Guesses Used: <span id="counter-val">0</span></p>
+
+    <button id="reset-btn">Reset Game</button>
+
+    <script>
+        // --- Variables ---
+        let secretNumber;
+        let guessCount = 0;
+        
+        // DOM Elements
+        const numButtons = document.querySelectorAll('.num-btn');
+        const resultDisplay = document.getElementById('result-display');
+        const counterVal = document.getElementById('counter-val');
+        const resetBtn = document.getElementById('reset-btn');
+
+        // --- Functions ---
+
+        // 1. Initialize/Reset Game
+        function initGame() {
+            // Generate random number between 1 and 5
+            secretNumber = Math.floor(Math.random() * 5) + 1;
+            
+            // Reset counter
+            guessCount = 0;
+            counterVal.textContent = guessCount;
+            
+            // Clear result image
+            resultDisplay.innerHTML = "";
+
+            // Restore buttons and attach event listeners
+            numButtons.forEach(button => {
+                button.classList.remove('hidden');
+                button.addEventListener('click', handleGuess);
+            });
+            
+            console.log("Secret Number (Cheater Code): " + secretNumber); // Useful for testing
+        }
+
+        // 2. Handle User Guess
+        function handleGuess(event) {
+            const clickedButton = event.currentTarget;
+            const userGuess = parseInt(clickedButton.getAttribute('data-num'));
+
+            // Increment and display guess counter
+            guessCount++;
+            counterVal.textContent = guessCount;
+
+            // Hide the selected button visually using CSS visibility
+            clickedButton.classList.add('hidden');
+
+            // --- Conditions ---
+            if (userGuess === secretNumber) {
+                // Win state: Display "YouWin.png" image
+                resultDisplay.innerHTML = `<img src="YouWin.png" alt="You Win!">`;
+                
+                // Disable remaining buttons by removing event listeners
+                disableAllButtons();
+            } else {
+                // Lose state: Display "GuessTheNumber.png" image
+                resultDisplay.innerHTML = `<img src="GuessTheNumber.png" alt="Keep Guessing!">`;
+            }
+        }
+
+        // 3. Disable Buttons after winning
+        function disableAllButtons() {
+            numButtons.forEach(button => {
+                button.removeEventListener('click', handleGuess);
+            });
+        }
+
+        // --- Event Listeners ---
+        
+        // OnLoad setup
+        window.addEventListener('DOMContentLoaded', initGame);
+
+        // Reset button listener
+        resetBtn.addEventListener('click', initGame);
+
+    </script>
+</body>
+</html>s
